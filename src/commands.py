@@ -92,3 +92,45 @@ async def user(ctx):
     embed.add_field(name='Last update', value=user.last_update, inline=False)
 
     return await ctx.send('', embed=embed)
+
+
+@client.command(aliases=['adds', 's+'])
+async def add_score(ctx, value=None):
+    """
+    Increase user score.
+    Must mention a member to register!
+    Must specify a score value!
+
+    Usage:
+        m:add_score 10 @Username
+    """
+    mentions = ctx.message.mentions
+    if not mentions:
+        return await ctx.send('You must mention someone @Username')
+
+    if value is None:
+        return await ctx.send('Score value not specified')
+
+    if not value.isdigit():
+        return await ctx.send('Score value must be a number')
+
+    member = mentions[0]
+
+    user_data = DbHandler.get_user(member.id)
+    if not user_data:
+        return await ctx.send('User not found')
+
+    DbHandler.increase_score(member.id, value)
+
+    user_data = DbHandler.get_user(member.id)
+    
+    user = User(*user_data)
+    embed = discord.Embed(color=0x1E1E1E, type='rich')
+    embed.set_thumbnail(url=member.avatar)
+
+    embed.add_field(name='Name', value=user.name, inline=False)
+    embed.add_field(name='Challenges', value=user.challenges, inline=False)
+    embed.add_field(name='Score', value=user.score, inline=False)
+    embed.add_field(name='Last update', value=user.last_update, inline=False)
+
+    return await ctx.send('', embed=embed)
