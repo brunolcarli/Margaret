@@ -3,6 +3,8 @@ import os
 
 __version__ = '0.0.0'
 
+
+ENV_REF = os.environ.get('ENV_REF', 'development')
 TOKEN = os.environ.get('TOKEN')
 MYSQL_CONFIG = {
     'MYSQL_HOST': os.environ.get('MYSQL_HOST', 'localhost'),
