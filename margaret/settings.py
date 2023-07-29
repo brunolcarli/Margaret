@@ -1,7 +1,7 @@
 import os
 
 
-__version__ = '0.0.0'
+__version__ = '0.1.0'
 
 
 ENV_REF = os.environ.get('ENV_REF', 'development')
