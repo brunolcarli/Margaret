@@ -1,3 +1,4 @@
+import pandas as pd
 import discord
 from discord.ext import commands
 from margaret.settings import __version__
@@ -169,3 +170,24 @@ async def add_challenge(ctx):
     embed.add_field(name='Last update', value=user.last_update, inline=False)
 
     return await ctx.send('', embed=embed)
+
+
+@client.command(aliases=['top'])
+async def top10(ctx):
+    """
+    Return the Top 10 users ranking.
+
+    Usage:
+        m:top10
+    """
+    users = DbHandler.get_users()
+    
+    df = pd.DataFrame(users, columns=['ID', 'MEMBER_ID', 'NAME', 'CHALLENGES', 'SCORE', 'LAST_UPDATE'])
+    df.sort_values(by='SCORE', ascending=False, inplace=True)
+
+    embed = discord.Embed(color=0x1E1E1E, type='rich')
+    for i, row in enumerate(df[['NAME', 'SCORE', 'CHALLENGES']].values[:10]):
+        name, score, challenges = row
+        embed.add_field(name=f'{i+1}: {name}', value=f'Challenges: {challenges} | Score: {score}', inline=False)        
+
+    return await ctx.send('Top 10 Ranking', embed=embed)
