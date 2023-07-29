@@ -9,6 +9,44 @@ from margaret.settings import MYSQL_CONFIG
 logger = logging.getLogger(__name__)
 
 
+
+class DbHandler:
+    @staticmethod
+    def get_user(member_id):
+        user = read_query(
+            create_db_connection(),
+            DbQueries.select_user(condition('member_id', member_id))
+        )
+        return next(iter(user), None)
+
+    @staticmethod
+    def get_users():
+        users = read_query(
+            create_db_connection(),
+            DbQueries.select_user()
+        )
+        return users
+    
+    @staticmethod
+    def create_user(member_id, name):
+        execute_query(
+            create_db_connection(),
+            DbQueries.insert_user(member_id, name)
+        )
+
+    @staticmethod
+    def increase_score(member_id, value):
+        con = create_db_connection()
+        execute_query(con, DbQueries.update_user_score(member_id, value))
+        execute_query(con, DbQueries.update_user_last_update(member_id))
+
+    @staticmethod
+    def increase_challenge(member_id):
+        con = create_db_connection()
+        execute_query(con, DbQueries.update_user_challenges(member_id))
+        execute_query(con, DbQueries.update_user_last_update(member_id))
+
+
 class DbQueries:
 
     @staticmethod
@@ -61,8 +99,12 @@ class DbQueries:
     @staticmethod
     def update_user_last_update(member_id):
         now = datetime.now().astimezone(pytz.timezone('America/Sao_Paulo')).strftime('%Y-%m-%d %H:%M:%S')
-        query = f'UPDATE User SET last_update = {now} WHERE member_id = {member_id}'
+        query = f'UPDATE User SET last_update = "{now}" WHERE member_id = {member_id}'
         return query
+
+
+def condition(column, value, operator='='):
+    return {'column': column, 'operator': operator, 'value': value}
 
 
 def db_connection(
