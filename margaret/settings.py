@@ -6,6 +6,7 @@ __version__ = '0.1.0'
 
 ENV_REF = os.environ.get('ENV_REF', 'development')
 TOKEN = os.environ.get('TOKEN')
+ADM = os.environ.get('ADMINS', '[]')
 MYSQL_CONFIG = {
     'MYSQL_HOST': os.environ.get('MYSQL_HOST', 'localhost'),
     'MYSQL_USER': os.environ.get('MYSQL_USER', 'guest'),

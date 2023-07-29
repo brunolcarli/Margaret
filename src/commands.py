@@ -4,6 +4,7 @@ from discord.ext import commands
 from margaret.settings import __version__
 from src.database import DbHandler
 from src.models import User
+from src.util import authorized
 
 
 client = commands.Bot(command_prefix='m:', intents=discord.Intents.all())
@@ -105,6 +106,9 @@ async def add_score(ctx, value=None):
     Usage:
         m:add_score 10 @Username
     """
+    if not authorized(ctx.message.author.id):
+        return await ctx.send('Not authorized!')
+
     mentions = ctx.message.mentions
     if not mentions:
         return await ctx.send('You must mention someone @Username')
@@ -146,6 +150,9 @@ async def add_challenge(ctx):
     Usage:
         m:add_challenge @Username
     """
+    if not authorized(ctx.message.author.id):
+        return await ctx.send('Not authorized!')
+
     mentions = ctx.message.mentions
     if not mentions:
         return await ctx.send('You must mention someone @Username')
