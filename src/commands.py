@@ -61,3 +61,34 @@ async def register(ctx):
     embed.add_field(name='Last update', value=user.last_update, inline=False)
 
     return await ctx.send('New user registered:', embed=embed)
+
+
+@client.command(aliases=['usr', 'u', 'view'])
+async def user(ctx):
+    """
+    View a user data.
+    Must mention a member to register!
+
+    Usage:
+        m:user @Username
+    """
+    mentions = ctx.message.mentions
+    if not mentions:
+        return await ctx.send('You must mention someone @Username')
+
+    member = mentions[0]
+
+    user_data = DbHandler.get_user(member.id)
+    if not user_data:
+        return await ctx.send('User not found')
+    
+    user = User(*user_data)
+    embed = discord.Embed(color=0x1E1E1E, type='rich')
+    embed.set_thumbnail(url=member.avatar)
+
+    embed.add_field(name='Name', value=user.name, inline=False)
+    embed.add_field(name='Challenges', value=user.challenges, inline=False)
+    embed.add_field(name='Score', value=user.score, inline=False)
+    embed.add_field(name='Last update', value=user.last_update, inline=False)
+
+    return await ctx.send('', embed=embed)
